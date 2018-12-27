@@ -1,0 +1,256 @@
+1
+CREATE FUNCTION dbo.DayWord(@day int)
+  RETURNS NVARCHAR(100)
+      AS
+  BEGIN
+        DECLARE @str NVARCHAR(100)
+        DECLARE @lastNumberOfDay INT
+        SET @lastNumberOfDay = @day % 10
+        SET @str=
+            CASE WHEN @day >= 10 AND @day <= 20 THEN CAST(@day as varchar(10)) + N' Днів'
+                 WHEN @lastNumberOfDay = 1 THEN CAST(@day as varchar(10)) + N' День'
+                 WHEN (@lastNumberOfDay BETWEEN 1 AND 4) THEN CAST(@day as varchar(10)) + N' Дні'
+                 WHEN (@lastNumberOfDay > 4 OR @lastNumberOfDay = 0 OR @day = 0) THEN CAST(@day as varchar(10)) + N' Днів'
+        ELSE ''
+  END
+  RETURN @str
+END
+GO
+CREATE FUNCTION dbo.MonthWord(@month int)
+  RETURNS NVARCHAR(100)
+      AS
+  BEGIN
+       DECLARE @str NVARCHAR(100)
+        DECLARE @lastNumberOfDay INT
+        SET @lastNumberOfDay = @month % 10
+        SET @str=
+            CASE WHEN @lastNumberOfDay = 1 THEN CAST(@month as varchar(10)) + N' Місяць'
+                 WHEN (@lastNumberOfDay BETWEEN 1 AND 4) THEN CAST(@month as varchar(10)) + N' Місяці'
+                 WHEN (@lastNumberOfDay > 4 OR @lastNumberOfDay = 0 OR (@month >= 10 AND @month <= 12)) THEN CAST(@month as varchar(10)) + N' Місяців'
+        ELSE ''
+  END
+  RETURN @str
+END
+GO
+CREATE FUNCTION dbo.YearWord(@year int)
+  RETURNS NVARCHAR(100)
+      AS
+  BEGIN
+       DECLARE @str NVARCHAR(100)
+        DECLARE @lastNumberOfDay INT
+        SET @lastNumberOfDay = @year % 10
+        SET @str=
+            CASE WHEN @lastNumberOfDay = 1 THEN CAST(@year as varchar(10)) + N' Рік'
+                 WHEN (@lastNumberOfDay BETWEEN 1 AND 4) THEN CAST(@year as varchar(10)) + N' Роки'
+                 WHEN (@lastNumberOfDay > 4 OR @lastNumberOfDay = 0 OR (@year >= 10 AND @year <= 20)) THEN CAST(@year as varchar(10)) + N' Років'
+        ELSE ''
+  END
+  RETURN @str
+END
+GO
+
+CREATE FUNCTION dbo.DateWords(@dateFirst date, @dateSecond date)
+  RETURNS NVARCHAR(100)
+      AS
+  BEGIN
+        DECLARE @str NVARCHAR(300)
+        DECLARE @dateDiffDays INT
+        DECLARE @yearsCount INT
+        DECLARE @monthsCount INT
+        DECLARE @daysCount INT
+        SET @dateDiffDays = DATEDIFF(day,@dateFirst,@dateSecond);
+        SET @yearsCount = @dateDiffDays/365
+        SET @monthsCount = (@dateDiffDays-(@yearsCount*365))/31
+        SET @daysCount = @dateDiffDays - (@monthsCount*31) - (@yearsCount*365)
+
+        SET @str=dbo.YearWord(@yearsCount) +' '+ dbo.MonthWord(@monthsCount) + ' ' + dbo.DayWord(@daysCount);
+       
+  RETURN @str
+END
+GO
+
+SELECT dbo.DateWords('2010-01-01','2015-08-15');
+GO
+
+2
+CREATE FUNCTION dbo.NumberWord(@num_word int)
+	RETURNS NVARCHAR(100)
+	AS
+	BEGIN
+	DECLARE @str NVARCHAR(100)
+
+	SELECT
+	@str=CASE @num_word
+	WHEN 1 THEN N'Один '
+	WHEN 2 THEN N'Два '
+	WHEN 3 THEN N'Три '
+	WHEN 4 THEN N'Чотири '
+	WHEN 5 THEN N'Пять '
+	WHEN 6 THEN N'Шість '
+	WHEN 7 THEN N'Сім '
+	WHEN 8 THEN N'Вісім '
+	WHEN 9 THEN N'Девять '
+	WHEN 10 THEN N'Десять '
+	WHEN 11 THEN N'Одинадцять '
+	WHEN 12 THEN N'Дванадцять '
+	WHEN 13 THEN N'Тринадцять '
+	WHEN 14 THEN N'Чотирнадцять '
+	WHEN 15 THEN N'Пятнадцять '
+	WHEN 16 THEN N'Шістнадцять'
+	WHEN 17 THEN N'Сімнадцять '
+	WHEN 18 THEN N'Вісімнадцять '
+	WHEN 19 THEN N'Девятнадцять '
+	WHEN 20 THEN N'Двадцять'
+	WHEN 21 THEN N'Двадцять один '
+	WHEN 22 THEN N'Двадцять два '
+	WHEN 23 THEN N'Двадцять три '
+	WHEN 24 THEN N'Двадцять чотири '
+	WHEN 25 THEN N'Двадцять пять '
+	WHEN 26 THEN N'Двадцять шість '
+	WHEN 27 THEN N'Двадцять сім '
+	WHEN 28 THEN N'Двадцять вісім '
+	WHEN 29 THEN N'Двадцять девять'
+	WHEN 30 THEN N'Тридцять '
+	WHEN 31 THEN N'Тридцять один '
+   	WHEN 32 THEN N'Тридцять два '
+    	WHEN 33 THEN N'Тридцять три '
+    	WHEN 34 THEN N'Тридцять чотири '
+    	WHEN 35 THEN N'Тридцять пять '
+    	WHEN 36 THEN N'Тридцять шість  '
+    	WHEN 37 THEN N'Тридцять сім '
+    	WHEN 38 THEN N'Тридцять вісім '
+    	WHEN 39 THEN N'Тридцять девять '
+    	WHEN 40 THEN N'Сорок '
+    	WHEN 41 THEN N'Сорок один'
+    	WHEN 42 THEN N'Сорок два '
+    	WHEN 43 THEN N'Сорок три '
+    	WHEN 44 THEN N'Сорок чотири '
+    	WHEN 45 THEN N'Сорок пять '
+    	WHEN 46 THEN N'Сорок шість  '
+    	WHEN 47 THEN N'Сорок сім '
+    	WHEN 48 THEN N'Сорок вісім '
+    	WHEN 49 THEN N'Сорок девять '
+    	WHEN 50 THEN N'Пятдесят '
+    	WHEN 51 THEN N'Пятдесят один '
+    	WHEN 52 THEN N'Пятдесят два '
+    	WHEN 53 THEN N'Пятдесят три '
+    	WHEN 54 THEN N'Пятдесят чотири '
+    	WHEN 55 THEN N'Пятдесят пять '
+    	WHEN 56 THEN N'Пятдесят шість  '
+    	WHEN 57 THEN N'Пятдесят сім '
+    	WHEN 58 THEN N'Пятдесят вісім '
+    	WHEN 59 THEN N'Пятдесят девять '
+    	WHEN 60 THEN N'Шістдесят '
+    	WHEN 61 THEN N'Шістдесят один '
+    	WHEN 62 THEN N'Шістдесят два '
+    	WHEN 63 THEN N'Шістдесят три '
+    	WHEN 64 THEN N'Шістдесят чотири '
+    	WHEN 65 THEN N'Шістдесят пять '
+    	WHEN 66 THEN N'Шістдесят шість  '
+    	WHEN 67 THEN N'Шістдесят сім '
+    	WHEN 68 THEN N'Шістдесят вісім '
+    	WHEN 69 THEN N'Шістдесят девять '
+    	WHEN 70 THEN N'Сімдесят '
+    	WHEN 71 THEN N'Сімдесят один '
+    	WHEN 72 THEN N'Сімдесят два '
+    	WHEN 73 THEN N'Сімдесят три '
+    	WHEN 74 THEN N'Сімдесятчотири '
+    	WHEN 75 THEN N'Сімдесят пять '
+    	WHEN 76 THEN N'Сімдесят шість  '
+    	WHEN 77 THEN N'Сімдесят сім '
+    	WHEN 78 THEN N'Сімдесят вісім '
+    	WHEN 79 THEN N'Сімдесят девять '
+    	WHEN 80 THEN N'Вісімдесят '
+    	WHEN 81 THEN N'Вісімдесят один '
+    	WHEN 82 THEN N'Вісімдесят два '
+    	WHEN 83 THEN N'Вісімдесят три '
+    	WHEN 84 THEN N'Вісімдесят чотири '
+    	WHEN 85 THEN N'Вісімдесят пять '
+    	WHEN 86 THEN N'Вісімдесят шість  '
+    	WHEN 87 THEN N'Вісімдесят сім '
+    	WHEN 88 THEN N'Вісімдесят вісім '
+    	WHEN 89 THEN N'Вісімдесят девять '
+    	WHEN 90 THEN N'Девяносто '
+    	WHEN 91 THEN N'Девяносто один '
+    	WHEN 92 THEN N'Девяносто два '
+    	WHEN 93 THEN N'Девяносто три '
+    	WHEN 94 THEN N'Девяносто чотири '
+    	WHEN 95 THEN N'Девяносто пять '
+    	WHEN 96 THEN N'Девяносто шість  '
+    	WHEN 97 THEN N'Девяносто сім '
+    	WHEN 98 THEN N'Девяносто вісім '
+    	WHEN 99 THEN N'Девяносто девять '
+    ELSE ' '
+	END
+	RETURN @str
+	END
+GO
+
+Select dbo.NumberWord(38);
+GO
+
+3
+CREATE FUNCTION Employees_Salaries(@date_beg DATE, @date_end DATE, @ide int)
+RETURNS TABLE
+AS 
+RETURN 
+	SELECT DISTINCT a.salary,a.from_date, a.to_date
+	FROM Employees.salaries a 
+	WHERE emp_no = @ide and from_date = @date_beg and to_date = @date_end
+GO
+
+Select* 
+FROM Employees.Sal('1999-06-26','2000-06-25','10434')
+GO
+
+4
+CREATE FUNCTION dbo.Laba4_3 (@date DATE)
+   RETURNS TABLE
+    AS
+   RETURN 
+   (
+        WITH DateFrame(d1,d2)
+AS (
+SELECT CAST('2012-01-01' AS DATE) as d1, EOMONTH(CAST('2012-01-01' AS DATE)) as d2
+UNION ALL
+SELECT DATEADD(mm, 1, d1), EOMONTH(DATEADD(mm,1,d1))
+FROM DateFrame
+WHERE d1<DATEADD(mm, -1, DATEADD(yy, 1, CAST('2012-01-01' AS DATE)))
+)
+SELECT  a.CITY, d.d1 AS DATE_BEG, d.d2 AS DATE_END, SUM(h.TotalDue) AS SUMMA
+FROM DateFrame d, SalesLT.SalesOrderHeader h INNER JOIN SalesLT.Address a ON h.BillToAddressID=a.AddressID
+WHERE h.OrderDate BETWEEN d.d1 AND d.d2
+GROUP BY  a.City, d.d1, d.d2
+   )
+GO
+
+Select * 
+FROM dbo.Laba4_3(CAST('2012-01-01' AS DATE))
+GO
+
+5
+DECLARE Gen_SubTotal CURSOR FOR
+    SELECT SLT_SOH.SalesOrderID
+    FROM SalesLT.SalesOrderHeader as SLT_SOH
+OPEN Gen_SubTotal;
+DECLARE @SOH_ID INT
+    FETCH NEXT FROM Gen_SubTotal INTO @SOH_ID;
+WHILE @@FETCH_STATUS = 0
+    BEGIN
+        DECLARE @sumOfLineTotals MONEY;
+        SET @sumOfLineTotals = (SELECT SUM(LineTotal)
+                from SalesLT.SalesOrderDetail
+                where SalesOrderID = @SOH_ID)
+
+        UPDATE SalesLT.SalesOrderHeader
+            SET SubTotal =
+                CASE WHEN @sumOfLineTotals IS NULL THEN 0
+                     WHEN @sumOfLineTotals != NULL THEN @sumOfLineTotals
+                END
+            WHERE SalesOrderID = @SOH_ID
+        PRINT @sumOfLineTotals;
+        FETCH NEXT FROM Gen_SubTotal INTO @SOH_ID
+    END;
+CLOSE Gen_SubTotal;
+DEALLOCATE Gen_SubTotal;
+GO
